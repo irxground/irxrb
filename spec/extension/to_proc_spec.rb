@@ -29,5 +29,30 @@ describe '#to_proc' do
       is_str[12345].should_not be_true
     end
   end
+
+  describe Proc do
+    it 'should not cause infinit loop' do
+      is_odd = proc{|num| num % 2 != 0 }
+
+      is_odd[1].should     be_true
+      is_odd[2].should_not be_true
+
+      case 1
+      when is_odd
+        value = :odd
+      else
+        value = :even
+      end
+      value.should == :odd
+
+      case 2
+      when is_odd
+        value = :odd
+      else
+        value = :even
+      end
+      value.should == :even
+    end
+  end
 end
 
