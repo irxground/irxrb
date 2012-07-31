@@ -1,6 +1,6 @@
 require 'irxrb/version'
-require 'irxrb/extension/to_proc'
+require 'irxrb/extension'
 
 module Irxrb
-  # Your code goes here...
+  autoload :HashObject, 'irxrb/hash_object'
 end
