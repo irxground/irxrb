@@ -1,5 +1,5 @@
 class Object
   def to_proc
-    method :===
+    method(:===).to_proc
   end
 end

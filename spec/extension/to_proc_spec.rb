@@ -54,5 +54,10 @@ describe '#to_proc' do
       value.should == :even
     end
   end
+
+  describe '&proc' do
+    specify { [1,2,3].map(&2).should == [false, true, false] }
+    specify { %w(foo bar baz).select(&/a/).should == %w(bar baz) }
+  end
 end
 
