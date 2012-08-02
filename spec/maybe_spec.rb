@@ -3,6 +3,9 @@ require 'spec_helper'
 describe Irxrb::Maybe do
   describe '.[]' do
     specify { expect { Irxrb::Maybe[] }.to raise_error }
+    specify { Irxrb::Maybe[nil  ].should be_kind_of(Irxrb::Maybe) }
+    specify { Irxrb::Maybe[false].should be_kind_of(Irxrb::Maybe) }
+
     specify { Irxrb::Maybe[nil  ].should be_an_instance_of(Irxrb::Maybe::Nothing) }
     specify { Irxrb::Maybe[false].should be_an_instance_of(Irxrb::Maybe::Just) }
     specify { Irxrb::Maybe[true ].should be_an_instance_of(Irxrb::Maybe::Just) }
@@ -38,14 +41,16 @@ describe Irxrb::Maybe do
         @mock.stub(ret_self: @mock)
       end
 
-      specify { expect(!maybe(@mock).ret_self).to eq(@mock) }
-      specify { expect(!maybe(@mock).ret_nil ).to eq(nil) }
-      specify { expect(!maybe(@mock).ret_self.ret_self).to eq(@mock) }
-      specify { expect(!maybe(@mock).ret_self.ret_nil ).to eq(nil)   }
-      specify { expect(!maybe(@mock).ret_nil .ret_self).to eq(nil)   }
-      specify { expect(!maybe(@mock).ret_nil .ret_nil ).to eq(nil)   }
-      specify { expect(!maybe([1,2,3]).map{|x| x*x }).to eq([1,4,9]) }
-      specify { expect(!maybe([1,2,3]).inject{|a,x| a+x }).to eq(6)  }
+      specify { expect(!maybe(@mock).ret_self).to             eq(@mock)   }
+      specify { expect(!maybe(@mock).ret_nil ).to             eq(nil)     }
+      specify { expect(!maybe(@mock).ret_self.ret_self).to    eq(@mock)   }
+      specify { expect(!maybe(@mock).ret_self.ret_nil ).to    eq(nil)     }
+      specify { expect(!maybe(@mock).ret_nil .ret_self).to    eq(nil)     }
+      specify { expect(!maybe(@mock).ret_nil .ret_nil ).to    eq(nil)     }
+      specify { expect(!maybe([1,2,3]).map{|x| x*x }).to      eq([1,4,9]) }
+      specify { expect(!maybe([1,2,3]).inject{|a,x| a+x }).to eq(6)       }
+      specify { expect(!maybe(a: 1)[:a]).to                   eq(1)       }
+      specify { expect(!maybe(a: 1)[:b][:c]).to               eq(nil)     }
     end
   end
 

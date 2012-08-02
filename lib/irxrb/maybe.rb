@@ -1,13 +1,13 @@
 
 module Irxrb
-  module Maybe
+  class Maybe
     class << self
       def [](value)
         value != nil ? Just.new(value) : Nothing.instance
       end
     end
 
-    class Nothing
+    class Nothing < Maybe
       @@instance = new
 
       def initialize
@@ -27,7 +27,7 @@ module Irxrb
       end
     end
 
-    class Just
+    class Just < Maybe
       def initialize(value)
         raise 'argument should not be nil' if value == nil
         @value = value
