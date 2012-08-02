@@ -1,4 +1,5 @@
 require 'spec_helper'
+require 'irxrb/extensions/hash_to_obj'
 
 describe Hash do
   subject { Hash[a: 1] }

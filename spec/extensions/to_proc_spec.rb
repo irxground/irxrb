@@ -1,4 +1,5 @@
-require_relative '../spec_helper'
+require 'spec_helper'
+require 'irxrb/extensions/to_proc'
 
 describe '#to_proc' do
   describe Object do
