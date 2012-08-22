@@ -1,3 +1,6 @@
+
+[![Build Status](https://secure.travis-ci.org/irxground/irxrb.png?branch=master)](http://travis-ci.org/irxground/irxrb)
+
 # Irxrb
 
 TODO: Write a gem description
