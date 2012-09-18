@@ -3,109 +3,66 @@ module Irxrb::RangeToRegex
   module_function
 
   def invoke(range)
-    max = range.max
+    max = range.max + 1
     min = range.min
-    common = parse_common(min.to_s, max.to_s)
+    pivot = pivot(min, max)
 
-    if common.size > 0
-      diff = max.to_s.size - common.size
-      dex = 10 << (diff - 1)
-      max %= dex
-      min %= dex
-    end
-    Regexp.new(parse_diff(min, max)
-      .map{|pattern| common + pattern }
-      .join("|"))
-  end
-
-  def parse_common(min_str, max_str)
-    return '' if min_str.size != max_str.size
-    i = 0
-    while i < min_str.size
-      break if min_str[i] != max_str[i]
-      i += 1
-    end
-    return (i < 0) ? '' : min_str[0...i]
-  end
-
-  def parse_diff(min, max)
-    min, min_result = parse_diff_min(min, max)
-    p [min_result, min]
-    max_result = parse_diff_max(min, max)
-    min_result.concat(max_result)
-  end
-
-  def parse_diff_min(min, max)
     ret = []
-    min_chars = i_to_rev(min)
-    loop.with_index do |_, i|
-      next_chars = min_chars.clone
-      next if next_chars[i] == 0
-      next_chars[i] = 0
-      next_chars[i+1] ||= 0
-      next_chars[i+1] += 1
-      next_min = rev_to_i(next_chars)
-      break if next_min > max
 
-      buff = []
-      (min_chars.size - 1).downto(i+1) do |j|
-        buff << min_chars[i]
-      end
-      buff << "[#{min_chars[i]}-9]"
-      i.times{ buff << '[0-9]' }
-      ret << buff.join
-
-      min = next_min
-      min_chars = next_chars
+    base = pivot
+    split_by_unit(max - pivot).each do |unit, diff|
+      ret << make_regex(base, unit, diff)
+      base += unit * diff
     end
-    return min, ret
+
+    base = pivot
+    split_by_unit(pivot - min).each do |unit, diff|
+      ret.unshift make_regex(base, unit, -diff)
+      base -= unit * diff
+    end
+
+    /#{ret.join('|')}/
   end
 
-  def parse_diff_max(min, max)
-    min_chars = i_to_chars(min)
-    max_chars = i_to_chars(max)
+  def unit_of(num)
+    unit = 1
+    loop do
+      return unit if num < unit * 10
+      unit *= 10
+    end
+  end
+
+  def split_by_unit(num)
     ret = []
-    continue = true
-    while continue
-      buff = []
-      i = 0
-      while i < min_chars.size && min_chars[i] == max_chars[i]
-        buff << min_chars[i]
-        i += 1
-      end
-      continue = (i != min_chars.size)
-      if i < min_chars.size
-        if min_chars[i+1..-1].all?{|c| c == 0 } &&
-           max_chars[i+1..-1].all?{|c| c == 9 }
-          buff << "[#{min_chars[i]}-#{max_chars[i]}]"
-          continue = false
-        elsif min_chars[i] + 1 == max_chars[i]
-          buff << min_chars[i]
-        else
-          buff << "[#{min_chars[i]}-#{max_chars[i]-1}]"
-        end
-        min_chars[i] = max_chars[i]
-        i += 1
-      end
-      while i < min_chars.size
-        buff << '[0-9]'
-        i += 1
-      end
-      result = buff.join
-      ret << result
+    unit = 1
+    while num > 0
+      n = num % 10
+      ret.unshift [unit, n] if n != 0
+      unit *= 10
+      num /= 10
     end
     return ret
   end
 
-  def rev_to_i(rev_chars)
-    rev_chars.reverse.join.to_i
+  def pivot(min, max)
+    unit = unit_of(max)
+    pivot = max / unit * unit
+    while unit > 1 && (min / pivot) == 1
+      unit /= 10
+      pivot = max / unit * unit
+    end
+    return pivot
   end
 
-  def i_to_rev(int)
-    i_to_chars(int).reverse
-  end
-
-  def i_to_chars(int)
-    int.to_s.split('').map(&:to_i)
+  def make_regex(base, unit, diff)
+    if diff < 0
+      return make_regex(base + unit * diff, unit, -diff)
+    end
+    prefix = base / (unit * 10)
+    prefix_str = prefix == 0 ? '' : prefix.to_s
+    current = base / unit % 10
+    current_str = diff == 1 ? current.to_s : "[#{current}-#{current + diff - 1}]"
+    suffix_str = "[0-9]" * Math.log(unit, 10).to_i
+    return prefix_str + current_str + suffix_str
   end
 end

@@ -15,31 +15,47 @@ describe Irxrb::RangeToRegex do
     specify { invoke(1..111).should == /[1-9]|[1-9][0-9]|10[0-9]|11[0-1]/ }
 
     specify { invoke(59.. 79).should == /59|[6-7][0-9]/ }
-#    specify { invoke(60.. 80).should == /[1-9]|[1-9][0-9]/ }
-#    specify { invoke(61.. 81).should == /[1-9]|[1-9][0-9]/ }
-#    specify { invoke(59.. 99).should == /[1-9]|[1-9][0-9]/ }
-#    specify { invoke(60..100).should == /[1-9]|[1-9][0-9]/ }
-#    specify { invoke(61..101).should == /[1-9]|[1-9][0-9]/ }
+    specify { invoke(60.. 79).should == /[6-7][0-9]/ }
+    specify { invoke(61.. 79).should == /6[1-9]|7[0-9]/ }
+    specify { invoke(59.. 80).should == /59|[6-7][0-9]|80/ }
+    specify { invoke(60.. 80).should == /[6-7][0-9]|80/ }
+    specify { invoke(61.. 80).should == /6[1-9]|7[0-9]|80/ }
+    specify { invoke(59.. 81).should == /59|[6-7][0-9]|8[0-1]/ }
+    specify { invoke(60.. 81).should == /[6-7][0-9]|8[0-1]/ }
+    specify { invoke(61.. 81).should == /6[1-9]|7[0-9]|8[0-1]/ }
 
     specify { invoke(10..100).should == /[1-9][0-9]|100/ }
   end
 
-  describe "#parse_common" do
-    specify { parse_common("", "").should == "" }
-    specify { parse_common("a", "b").should == "" }
-    specify { parse_common("a", "ab").should == "" }
-    specify { parse_common("a", "a").should == "a" }
-    specify { parse_common("ab", "ab").should == "ab" }
-    specify { parse_common("ab", "ac").should == "a" }
+  describe '#unit_of' do
+    specify { unit_of(  8).should ==   1 }
+    specify { unit_of( 10).should ==  10 }
+    specify { unit_of( 99).should ==  10 }
+    specify { unit_of(100).should == 100 }
   end
 
-  describe '#rev_to_i' do
-    specify { rev_to_i(%w(1 2 3)).should == 321 }
-    specify { rev_to_i(%w(4 3 2)).should == 234 }
+  describe '#split_by_unit' do
+    specify { split_by_unit(1905).should == [[1000, 1], [100, 9], [1, 5]] }
   end
 
-  describe '#i_to_rev' do
-    specify { i_to_rev(123).should == [3, 2, 1] }
-    specify { i_to_rev(432).should == [2, 3, 4] }
+  describe '#pivot' do
+    specify { pivot(100, 200).should == 200 }
+    specify { pivot(199, 200).should == 200 }
+    specify { pivot( 99, 200).should == 200 }
+    specify { pivot(100, 299).should == 200 }
+    specify { pivot(100, 201).should == 200 }
+
+    specify { pivot(1860, 1970).should == 1900 }
+    specify { pivot(1960, 1970).should == 1970 }
+    specify { pivot(1986, 1987).should == 1987 }
+
+    specify { pivot(9876, 9876).should == 9876 }
+  end
+
+  describe '#make_regex' do
+    specify { make_regex(100, 10, 2).should == '1[0-1][0-9]' }
+    specify { make_regex(130, 10, 3).should == '1[3-5][0-9]' }
+    specify { make_regex(100, 10, 1).should == '10[0-9]' }
+    specify { make_regex(130, 10, 1).should == '13[0-9]' }
   end
 end
