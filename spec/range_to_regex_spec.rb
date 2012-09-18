@@ -25,6 +25,20 @@ describe Irxrb::RangeToRegex do
     specify { invoke(61.. 81).should == /6[1-9]|7[0-9]|8[0-1]/ }
 
     specify { invoke(10..100).should == /[1-9][0-9]|100/ }
+    specify do
+      actual = invoke(987..654321)
+      expect = [
+        '98[7-9]|99[0-9]',
+        '[1-9][0-9][0-9][0-9]',
+        '[1-9][0-9][0-9][0-9][0-9]',
+        '[1-5][0-9][0-9][0-9][0-9][0-9]',
+        '6[0-4][0-9][0-9][0-9][0-9]',
+        '65[0-3][0-9][0-9][0-9]',
+        '654[0-2][0-9][0-9]',
+        '6543[0-1][0-9]',
+        '65432[0-1]'].join('|')
+      actual.should == /#{expect}/
+    end
   end
 
   describe '#unit_of' do
@@ -57,5 +71,9 @@ describe Irxrb::RangeToRegex do
     specify { make_regex(130, 10, 3).should == '1[3-5][0-9]' }
     specify { make_regex(100, 10, 1).should == '10[0-9]' }
     specify { make_regex(130, 10, 1).should == '13[0-9]' }
+
+    specify { make_regex(  10,   10, 3).should == '[1-3][0-9]' }
+    specify { make_regex( 100,  100, 3).should == '[1-3][0-9][0-9]' }
+    specify { make_regex(1000, 1000, 3).should == '[1-3][0-9][0-9][0-9]' }
   end
 end

@@ -62,7 +62,7 @@ module Irxrb::RangeToRegex
     prefix_str = prefix == 0 ? '' : prefix.to_s
     current = base / unit % 10
     current_str = diff == 1 ? current.to_s : "[#{current}-#{current + diff - 1}]"
-    suffix_str = "[0-9]" * Math.log(unit, 10).to_i
+    suffix_str = "[0-9]" * Math.log(unit, 10).round
     return prefix_str + current_str + suffix_str
   end
 end
