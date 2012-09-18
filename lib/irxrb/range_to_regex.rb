@@ -38,9 +38,9 @@ module Irxrb::RangeToRegex
   def parse_diff_min(min, max)
     ret = []
     min_chars = i_to_rev(min)
-    i = 0
-    loop do
+    loop.with_index do |_, i|
       next_chars = min_chars.clone
+      next if next_chars[i] == 0
       next_chars[i] = 0
       next_chars[i+1] ||= 0
       next_chars[i+1] += 1
@@ -57,7 +57,6 @@ module Irxrb::RangeToRegex
 
       min = next_min
       min_chars = next_chars
-      i += 1
     end
     return min, ret
   end
@@ -76,8 +75,8 @@ module Irxrb::RangeToRegex
       end
       continue = (i != min_chars.size)
       if i < min_chars.size
-        if i + 1 == min_chars.size
-          # last char
+        if min_chars[i+1..-1].all?{|c| c == 0 } &&
+           max_chars[i+1..-1].all?{|c| c == 9 }
           buff << "[#{min_chars[i]}-#{max_chars[i]}]"
           continue = false
         elsif min_chars[i] + 1 == max_chars[i]
