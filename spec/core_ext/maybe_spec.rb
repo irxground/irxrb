@@ -1,5 +1,5 @@
 require 'spec_helper'
-require 'irxrb/extensions/maybe'
+require 'irxrb/core_ext/maybe'
 
 describe '#maybe' do
   it 'should raise error without block' do

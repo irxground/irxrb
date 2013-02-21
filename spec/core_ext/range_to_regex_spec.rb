@@ -1,5 +1,5 @@
 require 'spec_helper'
-require 'irxrb/extensions/range_to_regex'
+require 'irxrb/core_ext/range_to_regex'
 
 describe Range do
   subject { (10...100) }
