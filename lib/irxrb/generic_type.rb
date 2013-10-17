@@ -9,7 +9,7 @@ module Irxrb
           begin
             k = (m.is_a? Class) ?
               Class.new(m) :
-              Class.new.tap{ |x| x.instance_eval { include m } }
+              Module.new.tap{ |x| x.instance_eval { include m } }
             params.zip(types).each do |param_name, type|
               k.const_set param_name, type
               k.instance_eval do
