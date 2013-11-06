@@ -1,4 +1,4 @@
-module Irxrb::RangeToRegex
+module Irxrb::RangeToRegexp
 
   module_function
 
@@ -11,13 +11,13 @@ module Irxrb::RangeToRegex
 
     base = pivot
     split_by_unit(max - pivot).each do |unit, diff|
-      ret << make_regex(base, unit, diff)
+      ret << make_regexp(base, unit, diff)
       base += unit * diff
     end
 
     base = pivot
     split_by_unit(pivot - min).each do |unit, diff|
-      ret.unshift make_regex(base, unit, -diff)
+      ret.unshift make_regexp(base, unit, -diff)
       base -= unit * diff
     end
 
@@ -54,9 +54,9 @@ module Irxrb::RangeToRegex
     return pivot
   end
 
-  def make_regex(base, unit, diff)
+  def make_regexp(base, unit, diff)
     if diff < 0
-      return make_regex(base + unit * diff, unit, -diff)
+      return make_regexp(base + unit * diff, unit, -diff)
     end
     prefix = base / (unit * 10)
     prefix_str = prefix == 0 ? '' : prefix.to_s

@@ -1,7 +1,7 @@
 require 'spec_helper'
 
-describe Irxrb::RangeToRegex do
-  include Irxrb::RangeToRegex
+describe Irxrb::RangeToRegexp do
+  include Irxrb::RangeToRegexp
 
   describe '#invoke' do
     specify { invoke(1..  9).should == /[1-9]/ }
@@ -66,14 +66,14 @@ describe Irxrb::RangeToRegex do
     specify { pivot(9876, 9876).should == 9876 }
   end
 
-  describe '#make_regex' do
-    specify { make_regex(100, 10, 2).should == '1[0-1][0-9]' }
-    specify { make_regex(130, 10, 3).should == '1[3-5][0-9]' }
-    specify { make_regex(100, 10, 1).should == '10[0-9]' }
-    specify { make_regex(130, 10, 1).should == '13[0-9]' }
+  describe '#make_regexp' do
+    specify { make_regexp(100, 10, 2).should == '1[0-1][0-9]' }
+    specify { make_regexp(130, 10, 3).should == '1[3-5][0-9]' }
+    specify { make_regexp(100, 10, 1).should == '10[0-9]' }
+    specify { make_regexp(130, 10, 1).should == '13[0-9]' }
 
-    specify { make_regex(  10,   10, 3).should == '[1-3][0-9]' }
-    specify { make_regex( 100,  100, 3).should == '[1-3][0-9][0-9]' }
-    specify { make_regex(1000, 1000, 3).should == '[1-3][0-9][0-9][0-9]' }
+    specify { make_regexp(  10,   10, 3).should == '[1-3][0-9]' }
+    specify { make_regexp( 100,  100, 3).should == '[1-3][0-9][0-9]' }
+    specify { make_regexp(1000, 1000, 3).should == '[1-3][0-9][0-9][0-9]' }
   end
 end
