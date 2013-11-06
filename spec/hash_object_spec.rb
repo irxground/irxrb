@@ -10,8 +10,8 @@ describe Irxrb::HashObject do
 
     it 'should create instance' do
       expect {
-        Irxrb::HashObject.new(foo: bar)
-      }.not_to raise_error(ArgumentError)
+        Irxrb::HashObject.new(foo: 'bar')
+      }.not_to raise_error
     end
   end
 
